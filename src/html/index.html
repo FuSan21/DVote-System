@@ -5,12 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voting - Decentralized Voting System</title>
     <link rel="stylesheet" href="/css/index.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Voting System</h1>
-        <p>Voter interface - to be implemented</p>
+        <header>
+            <h1>Decentralized Voting System</h1>
+            <p id="accountAddress">Connecting to MetaMask...</p>
+        </header>
+        
+        <div class="voting-section">
+            <h2>Cast Your Vote</h2>
+            <p id="dates">Loading voting dates...</p>
+            
+            <div class="candidates-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Candidate Name</th>
+                            <th>Party</th>
+                            <th>Votes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="boxCandidate">
+                        <!-- Candidates will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="vote-section">
+                <button id="voteButton" onclick="App.vote()" disabled>Vote</button>
+                <div id="msg"></div>
+            </div>
+        </div>
     </div>
+    <script src="/dist/app.bundle.js"></script>
 </body>
 </html>
-
