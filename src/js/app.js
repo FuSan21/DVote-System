@@ -16,7 +16,24 @@ window.App = {
      instance.getCountCandidates().then(function(countCandidates){
 
             $(document).ready(function(){
-              instance.getDates().then(function(result){
+              $('#addCandidate').click(function() {
+                  var nameCandidate = $('#name').val();
+                  var partyCandidate = $('#party').val();
+                 instance.addCandidate(nameCandidate,partyCandidate).then(function(result){ })
+
+            });   
+              $('#addDate').click(function(){             
+                  var startDate = Date.parse(document.getElementById("startDate").value)/1000;
+
+                  var endDate =  Date.parse(document.getElementById("endDate").value)/1000;
+           
+                  instance.setDates(startDate,endDate).then(function(rslt){ 
+                    console.log("tarihler verildi");
+                  });
+
+              });     
+
+               instance.getDates().then(function(result){
                 var startDate = new Date(result[0]*1000);
                 var endDate = new Date(result[1]*1000);
 

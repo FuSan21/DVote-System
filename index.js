@@ -44,6 +44,10 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/favicon.ico'));
 });
 
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/admin.html'));
+});
+
 // Start the server
 app.listen(8080, () => {
   console.log('Server listening on http://localhost:8080');
