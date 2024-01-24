@@ -1,7 +1,29 @@
 const express = require('express');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config();
 
 const app = express();
+
+// Authorization middleware
+const authorizeUser = (req, res, next) => {
+  const token = req.query.Authorization?.split('Bearer ')[1];
+
+  if (!token) {
+    return res.status(401).send('<h1 align="center"> Login to Continue </h1>');
+  }
+  
+  try {
+    // Verify and decode the token
+    const decodedToken = jwt.verify(token, process.env.SECRET_KEY, { algorithms: ['HS256'] });
+
+    req.user = decodedToken;
+    next(); // Proceed to the next middleware
+  } catch (error) {
+    return res.status(401).json({ message: 'Invalid authorization token' });
+  }
+};
 
 // Basic routing
 app.get('/', (req, res) => {
@@ -44,8 +66,16 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/favicon.ico'));
 });
 
-app.get('/admin.html', (req, res) => {
+app.get('/admin.html', authorizeUser, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/admin.html'));
+});
+
+app.get('/index.html', authorizeUser, (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/index.html'));
+});
+
+app.get('/dist/login.bundle.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/dist/login.bundle.js'));
 });
 
 // Start the server
