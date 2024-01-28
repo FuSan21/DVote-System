@@ -50,10 +50,6 @@ app.get('/js/app.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/js/app.js'));
 });
 
-app.get('/index.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/html/index.html'));
-});
-
 app.get('/dist/app.bundle.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/dist/app.bundle.js'));
 });

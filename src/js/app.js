@@ -19,16 +19,50 @@ window.App = {
               $('#addCandidate').click(function() {
                   var nameCandidate = $('#name').val();
                   var partyCandidate = $('#party').val();
-                 instance.addCandidate(nameCandidate,partyCandidate).then(function(result){ })
+                  if (!nameCandidate || !partyCandidate) {
+                    alert("Please fill in both candidate name and party");
+                    return;
+                  }
+                 instance.addCandidate(nameCandidate,partyCandidate).then(function(result){ 
+                   alert("Candidate added successfully");
+                   $('#name').val('');
+                   $('#party').val('');
+                   window.location.reload();
+                 }).catch(function(err){
+                   console.error("Error adding candidate: " + err.message);
+                   alert("Error adding candidate. Please try again.");
+                 });
 
             });   
               $('#addDate').click(function(){             
-                  var startDate = Date.parse(document.getElementById("startDate").value)/1000;
-
-                  var endDate =  Date.parse(document.getElementById("endDate").value)/1000;
+                  var startDateInput = document.getElementById("startDate").value;
+                  var endDateInput = document.getElementById("endDate").value;
+                  
+                  if (!startDateInput || !endDateInput) {
+                    alert("Please select both start and end dates");
+                    return;
+                  }
+                  
+                  var startDate = Date.parse(startDateInput)/1000;
+                  var endDate = Date.parse(endDateInput)/1000;
+                  
+                  if (isNaN(startDate) || isNaN(endDate)) {
+                    alert("Invalid date format. Please select valid dates.");
+                    return;
+                  }
+                  
+                  if (endDate <= startDate) {
+                    alert("End date must be after start date");
+                    return;
+                  }
            
                   instance.setDates(startDate,endDate).then(function(rslt){ 
-                    console.log("tarihler verildi");
+                    console.log("Voting dates set successfully");
+                    alert("Voting dates have been set successfully");
+                    window.location.reload();
+                  }).catch(function(err){
+                    console.error("Error setting dates: " + err.message);
+                    alert("Error setting voting dates: " + err.message);
                   });
 
               });     
@@ -37,7 +71,7 @@ window.App = {
                 var startDate = new Date(result[0]*1000);
                 var endDate = new Date(result[1]*1000);
 
-                $("#dates").text( startDate.toDateString(("#DD#/#MM#/#YYYY#")) + " - " + endDate.toDateString("#DD#/#MM#/#YYYY#"));
+                $("#dates").text( startDate.toDateString() + " - " + endDate.toDateString());
               }).catch(function(err){ 
                 console.error("ERROR! " + err.message)
               });           
@@ -61,8 +95,12 @@ window.App = {
           console.log(voted);
           if(!voted)  {
             $("#voteButton").attr("disabled", false);
-
+          } else {
+            $("#voteButton").attr("disabled", true);
+            $("#msg").html("<p style='color: orange;'>You have already voted.</p>");
           }
+      }).catch(function(err){
+        console.error("Error checking vote status: " + err.message);
       });
 
     }).catch(function(err){ 
@@ -79,11 +117,17 @@ window.App = {
     VotingContract.deployed().then(function(instance){
       instance.vote(parseInt(candidateID)).then(function(result){
         $("#voteButton").attr("disabled", true);
-        $("#msg").html("<p>Voted</p>");
-         window.location.reload(1);
-      })
+        $("#msg").html("<p style='color: green;'>Vote cast successfully!</p>");
+        setTimeout(function(){
+          window.location.reload(1);
+        }, 2000);
+      }).catch(function(err){ 
+        console.error("ERROR! " + err.message);
+        $("#msg").html("<p style='color: red;'>Error casting vote: " + err.message + "</p>");
+      });
     }).catch(function(err){ 
-      console.error("ERROR! " + err.message)
+      console.error("ERROR! " + err.message);
+      $("#msg").html("<p style='color: red;'>Error connecting to contract: " + err.message + "</p>");
     })
   }
 }
